@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:Examples/MultipeerKit_iOS_Example/MultipeerKit_iOS_Example.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:MultipeerKit_iOS/MultipeerKit_iOS.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:MultipeerKit_OSX/MultipeerKit_OSX.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Examples/MultipeerKit_OSX_Example/MultipeerKit_OSX_Example.xcodeproj">
+   </FileRef>
+</Workspace>
