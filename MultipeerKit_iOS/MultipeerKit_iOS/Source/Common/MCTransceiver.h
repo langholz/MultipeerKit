@@ -51,6 +51,7 @@ NSString *NSStringFromMCTransceiverMode(MCTransceiverMode mode);
 -(void)stopAdvertising;
 -(void)startBrowsing;
 -(void)stopBrowsing;
+-(void)disconnect;
 -(NSArray *)connectedPeers;
 -(void)sendUnreliableData:(NSData *)data
                   toPeers:(NSArray *)peers

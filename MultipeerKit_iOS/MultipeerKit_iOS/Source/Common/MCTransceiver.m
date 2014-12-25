@@ -44,7 +44,6 @@ NSString *NSStringFromMCSessionState(MCSessionState state)
 @implementation MCTransceiver
 
 #pragma mark - Public API
-
 -(void)startAdvertising
 {
     [self.advertiser startAdvertisingPeer];
@@ -67,6 +66,23 @@ NSString *NSStringFromMCSessionState(MCSessionState state)
 {
     [self.browser stopBrowsingForPeers];
     if ([self.delegate respondsToSelector:@selector(didStopBrowsing)]) {[self.delegate didStopBrowsing];}
+}
+
+-(void)disconnect
+{
+    switch (self.mode) {
+        case MCTransceiverModeAdvertiser:
+            [self stopAdvertising];
+            break;
+            
+        case MCTransceiverModeBrowser:
+            [self stopBrowsing];
+            break;
+            
+        default:
+            break;
+    }
+    [self.session disconnect];
 }
 
 -(NSArray *)connectedPeers
