@@ -38,6 +38,8 @@ NSString *NSStringFromMCSessionState(MCSessionState state)
 @property (strong, nonatomic, readonly) MCSession *session;
 @property (strong, nonatomic, readonly) MCNearbyServiceAdvertiser *advertiser;
 @property (strong, nonatomic, readonly) MCNearbyServiceBrowser *browser;
+
+-(BOOL)connectWithPeer:(MCPeerID *)peerID;
 @end
 
 
@@ -172,10 +174,11 @@ invitationHandler:(void(^)(BOOL accept, MCSession *session))invitationHandler
 {
     NSLog(@"didReceiveInvitationFromPeer: %@", peerID.displayName);
     [self.delegate didReceiveInvitationFromPeer:peerID];
-    invitationHandler(YES, self.session);
+    BOOL connectWithPeer = [self connectWithPeer:peerID];
+    invitationHandler(connectWithPeer, self.session);
 }
 
--(void) advertiser:(MCNearbyServiceAdvertiser *)advertiser didNotStartAdvertisingPeer:(NSError *)error
+-(void)advertiser:(MCNearbyServiceAdvertiser *)advertiser didNotStartAdvertisingPeer:(NSError *)error
 {
     NSLog(@"didNotStartAdvertisingPeer: %@", error);
 }
@@ -188,7 +191,11 @@ invitationHandler:(void(^)(BOOL accept, MCSession *session))invitationHandler
     NSLog(@"MCTransceiver foundPeer: %@ {%@}", peerID.displayName, info);
     [self.delegate didFindPeer:peerID];
     
-    [browser invitePeer:peerID toSession:self.session withContext:nil timeout:kMCTDefaultPeerInviteTimeout];
+    BOOL invitePeer = [self connectWithPeer:peerID];
+    if (invitePeer)
+    {
+        [browser invitePeer:peerID toSession:self.session withContext:nil timeout:kMCTDefaultPeerInviteTimeout];
+    }
 }
 
 -(void)browser:(MCNearbyServiceBrowser *)browser lostPeer:(MCPeerID *)peerID
@@ -200,6 +207,25 @@ invitationHandler:(void(^)(BOOL accept, MCSession *session))invitationHandler
 - (void)browser:(MCNearbyServiceBrowser *)browser didNotStartBrowsingForPeers:(NSError *)error
 {
     NSLog(@"didNotStartBrowsingForPeers: %@", error);
+}
+
+#pragma mark - Private Helpers
+
+-(BOOL)connectWithPeer:(MCPeerID *)peerID
+{
+    BOOL connect = YES;
+    if ([self.delegate respondsToSelector:@selector(connectWithPeer:)])
+    {
+        connect = [self.delegate connectWithPeer:peerID];
+        NSLog(@"MCTransceiver connectWithPeer: %@ {%@}", peerID.displayName, @(connect));
+    }
+    
+    if (!connect && [self.delegate respondsToSelector:@selector(didSkipConnectWithPeer:)])
+    {
+        [self.delegate didSkipConnectWithPeer:peerID];
+    }
+    
+    return connect;
 }
 
 

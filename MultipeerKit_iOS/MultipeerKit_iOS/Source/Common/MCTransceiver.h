@@ -37,6 +37,8 @@ NSString *NSStringFromMCTransceiverMode(MCTransceiverMode mode);
 -(void)didStopAdvertising;
 -(void)didStartBrowsing;
 -(void)didStopBrowsing;
+-(BOOL)connectWithPeer:(MCPeerID *)peerId;
+-(void)didSkipConnectWithPeer:(MCPeerID *)peerId;
 @end
 
 
